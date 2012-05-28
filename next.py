@@ -154,7 +154,7 @@ class DoThisNext():
 
     def run(self):
         if os.path.getsize(self.inbox_filename):
-            tf = todo_file(self.inbox_filename)
+            tf = TodoFile(self.inbox_filename)
             filename = tf.filename
             n = tf.next()
         else:
