@@ -141,6 +141,7 @@ class DoThisNext():
     def __init__(self):
         parser = argparse.ArgumentParser(description='Echo next action.')
         parser.add_argument('--edit', action='store_true', help='sets output format to editor arguments')
+        parser.add_argument('--last', action='store_true', help='repeats last output')
         parser.add_argument('folder', help='location of todo files')
 
         self.args = parser.parse_args()
@@ -149,10 +150,21 @@ class DoThisNext():
 
         self.inbox_filename = os.path.join(folder, 'inbox.otl')
         self.projects_dir = os.path.join(folder, 'projects')
+        self.last_filename = os.path.join(folder, ".last")
 
         self.daily = DailyFile(folder)
 
     def run(self):
+        if self.args.last:
+            filename, line_number, data = [l.strip() for l in
+                    open(self.last_filename).readlines()[:3]]
+            if self.args.edit:
+                print "+{} {}".format(line_number, filename)
+            else:
+                print os.path.basename(filename)
+                print data
+            return
+
         if os.path.getsize(self.inbox_filename):
             tf = TodoFile(self.inbox_filename)
             filename = tf.filename
@@ -174,6 +186,10 @@ class DoThisNext():
             else:
                 print os.path.basename(filename)
                 print data
+            with open(self.last_filename, "w") as f:
+                f.write("{}\n".format(filename))
+                f.write("{}\n".format(line_number))
+                f.write("{}\n".format(data))
 
 if __name__ == '__main__':
     DoThisNext().run()

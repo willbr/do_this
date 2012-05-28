@@ -7,6 +7,19 @@ if [ $# -eq 0 ]
 then
     ${next} ${todo_folder}
 else
-    $EDITOR `${next} --edit ${todo_folder}`
+    case $1 in
+        edit)
+            $EDITOR `${next} --edit ${todo_folder}`
+            ;;
+        edit-last)
+            $EDITOR `${next} --edit --last ${todo_folder}`
+            ;;
+        last)
+            ${next} --last ${todo_folder}
+            ;;
+        *)
+            echo Unknown command: $1
+            ;;
+    esac
 fi
 
